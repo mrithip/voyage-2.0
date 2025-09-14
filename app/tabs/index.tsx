@@ -103,7 +103,7 @@ export default function Dashboard() {
     <TouchableOpacity
       key={memory._id}
       style={styles.memoryCard}
-      onPress={() => {/* Navigate to memory details later */}}
+      onPress={() => router.push(`/memory/${memory._id}`)}
     >
       <View style={styles.memoryCardContent}>
         <Image
