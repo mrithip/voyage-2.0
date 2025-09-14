@@ -90,6 +90,18 @@ export default function AddMemoryScreen() {
     }
   };
 
+  const clearForm = () => {
+    setTitle('');
+    setDescription('');
+    setPlaceName('');
+    setLocationLink('');
+    setFromDate(new Date());
+    setToDate(new Date());
+    setPhoto(null);
+    setShowFromDatePicker(false);
+    setShowToDatePicker(false);
+  };
+
   const selectPhoto = async () => {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -252,20 +264,32 @@ export default function AddMemoryScreen() {
           )}
         </View>
 
-        {/* Save Button */}
-        <TouchableOpacity
-          style={styles.saveButton}
-          onPress={handleSave}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text style={styles.saveButtonText}>
-              Save Memory
+        {/* Buttons */}
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            style={styles.clearButton}
+            onPress={clearForm}
+            disabled={loading}
+          >
+            <Text style={styles.clearButtonText}>
+              Clear Form
             </Text>
-          )}
-        </TouchableOpacity>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={handleSave}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text style={styles.saveButtonText}>
+                Save Memory
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
@@ -367,11 +391,30 @@ const styles = StyleSheet.create({
   dateText: {
     color: '#111827',
   },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 32,
+  },
+  clearButton: {
+    backgroundColor: '#6b7280',
+    borderRadius: 8,
+    paddingVertical: 16,
+    flex: 1,
+    marginRight: 8,
+  },
+  clearButtonText: {
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: '600',
+    fontSize: 16,
+  },
   saveButton: {
     backgroundColor: '#0ea5e9',
     borderRadius: 8,
     paddingVertical: 16,
-    marginTop: 32,
+    flex: 1,
+    marginLeft: 8,
   },
   saveButtonText: {
     color: 'white',

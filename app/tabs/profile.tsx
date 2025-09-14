@@ -28,6 +28,49 @@ export default function ProfileScreen() {
     );
   };
 
+  const showTermsAndConditions = () => {
+    Alert.alert(
+      'Terms and Conditions',
+      'Welcome to Voyage! By using our app, you agree to the following terms:\n\n' +
+      '1. Acceptance of Terms: By downloading or using Voyage, you agree to these terms.\n\n' +
+      '2. Use License: We grant you a limited, non-transferable license to use Voyage.\n\n' +
+      '3. Content: You are responsible for content you upload. We do not claim ownership.\n\n' +
+      '4. Privacy: Your privacy is protected under our Privacy Policy.\n\n' +
+      '5. Prohibited Uses: Do not use the app for illegal activities.\n\n' +
+      '6. Termination: We may terminate your account for breach of terms.\n\n' +
+      '7. Limitation of Liability: The app is provided "as is".\n\n' +
+      '8. Changes to Terms: We may update these terms at any time.\n\n' +
+      'Contact us at support@voyageapp.com for questions.',
+      [{ text: 'OK' }]
+    );
+  };
+
+  const showPrivacyPolicy = () => {
+    Alert.alert(
+      'Privacy Policy',
+      'Voyage values your privacy. Our Privacy Policy explains how we collect, use, and protect your information:\n\n' +
+      '1. Information We Collect:\n' +
+      '   - Personal information you provide (name, email)\n' +
+      '   - Memories and content you upload\n' +
+      '   - Usage data and device information\n\n' +
+      '2. How We Use Information:\n' +
+      '   - Provide and improve our services\n' +
+      '   - Personalize your experience\n' +
+      '   - Communicate with you\n\n' +
+      '3. Information Sharing:\n' +
+      '   - We do not sell your personal information\n' +
+      '   - May share anonymized data for analytics\n\n' +
+      '4. Data Security:\n' +
+      '   - We implement security measures to protect your data\n' +
+      '   - You can request data deletion\n\n' +
+      '5. Cookies and Tracking: Limited use for app functionality\n\n' +
+      '6. Children\'s Privacy: App is for users 13+\n\n' +
+      '7. Changes to Policy: We may update this policy\n\n' +
+      'Contact support@voyageapp.com for privacy concerns.',
+      [{ text: 'OK' }]
+    );
+  };
+
   const profileItems = [
     {
       icon: 'person-outline',
@@ -101,6 +144,15 @@ export default function ProfileScreen() {
             Voyage v1.0.0{'\n'}
             Made with ❤️ by Your App
           </Text>
+
+          <View style={styles.appLinks}>
+            <TouchableOpacity onPress={showTermsAndConditions}>
+              <Text style={styles.appLink}>Terms and Conditions</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={showPrivacyPolicy}>
+              <Text style={styles.appLink}>Privacy Policy</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -217,5 +269,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#6b7280',
     fontSize: 14,
+    marginBottom: 16,
+  },
+  appLinks: {
+    alignItems: 'center',
+  },
+  appLink: {
+    color: '#0ea5e9',
+    fontSize: 14,
+    marginVertical: 4,
+    textDecorationLine: 'underline',
   },
 });
