@@ -1,50 +1,206 @@
-# Welcome to your Expo app 👋
+# Voyage - Travel Memory App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A full-stack React Native (Expo) application for storing and organizing travel memories, built with Node.js, Express, MongoDB, and NativeWind for styling.
 
-## Get started
+## 🚀 Features
 
-1. Install dependencies
+- **User Authentication**: Secure signup/login with JWT tokens
+- **Memory Management**: Add, view, edit, and delete travel memories
+- **Photo Storage**: Base64-encoded images stored in MongoDB
+- **Year-Month Organization**: Memories organized in folder-like structure
+- **Search & Filter**: Find memories by title, place, or date
+- **Modern UI**: Clean interface built with TailwindCSS (NativeWind)
+- **Cross-Platform**: Works on iOS and Android
 
-   ```bash
-   npm install
-   ```
+## 🏗️ Architecture
 
-2. Start the app
+### Backend (Node.js + Express + MongoDB)
+- RESTful API endpoints
+- JWT authentication middleware
+- MongoDB Atlas for data storage
+- Password encryption with bcrypt
+- Input validation and security
 
-   ```bash
-   npx expo start
-   ```
+### Frontend (React Native + Expo)
+- Expo Router for navigation
+- Authentication context for state management
+- API service layer for HTTP requests
+- NativeWind (TailwindCSS) for styling
+- Image picker for photo selection
 
-In the output, you'll find options to open the app in a
+## 📁 Project Structure
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+voyage/
+├── backend/
+│   ├── models/
+│   │   ├── User.js
+│   │   └── Memory.js
+│   ├── routes/
+│   │   ├── auth.js
+│   │   └── memories.js
+│   ├── middleware/
+│   │   └── auth.js
+│   ├── server.js
+│   ├── package.json
+│   └── .env
+├── app/
+│   ├── _layout.tsx
+│   ├── index.tsx
+│   ├── (auth)/
+│   │   ├── login.tsx
+│   │   └── signup.tsx
+│   └── (tabs)/
+│       ├── _layout.tsx
+│       ├── index.tsx
+│       ├── add.tsx
+│       └── profile.tsx
+├── contexts/
+│   └── AuthContext.tsx
+├── utils/
+│   └── api.ts
+├── package.json
+├── babel.config.js
+└── tailwind.config.js
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 🔧 Setup Instructions
 
-## Learn more
+### Prerequisites
+- Node.js (v14+)
+- npm or yarn
+- MongoDB Atlas account
+- Expo CLI
 
-To learn more about developing your project with Expo, look at the following resources:
+### Backend Setup
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+1. **Install dependencies:**
+```bash
+cd backend
+npm install
+```
 
-## Join the community
+2. **Environment configuration:**
+```bash
+# Copy .env file and update values
+cp .env.example .env
+# Edit .env with your MongoDB Atlas connection string and JWT secret
+```
 
-Join our community of developers creating universal apps.
+3. **Start the backend server:**
+```bash
+npm run dev
+# Server will run on http://localhost:5000
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Frontend Setup
+
+1. **Install dependencies:**
+```bash
+cd .. # Return to root directory
+npm install
+```
+
+2. **Start the development server:**
+```bash
+npm start
+```
+
+3. **Run on device/simulator:**
+```bash
+# iOS
+npm run ios
+
+# Android
+npm run android
+
+# Web
+npm run web
+```
+
+## 🔐 Environment Variables
+
+### Backend (.env)
+```env
+MONGODB_URI=your-mongodb-atlas-connection-string
+JWT_SECRET=your-super-secret-jwt-key
+PORT=5000
+FRONTEND_URL=http://localhost:8081
+NODE_ENV=development
+```
+
+### Frontend
+The frontend communicates with the backend via HTTP requests. Update the API_BASE_URL in `utils/api.ts` if the backend is hosted on a different URL.
+
+## 📡 API Endpoints
+
+### Authentication
+- `POST /auth/signup` - Register new user
+- `POST /auth/login` - Login user
+
+### Memories
+- `GET /memories` - Fetch all memories (with search/filter)
+- `POST /memories` - Create new memory
+- `PUT /memories/:id` - Update memory
+- `DELETE /memories/:id` - Delete memory
+
+All memory endpoints require authentication (JWT token).
+
+## 🎨 Components & Styling
+
+- **TailwindCSS + NativeWind**: Utility-first CSS framework
+- **Expo Vector Icons**: Icon library
+- **Custom Components**: Reusable UI components with consistent styling
+- **Responsive Design**: Works across different screen sizes
+
+## 📝 Usage
+
+1. **Signup/Login**: Create account or sign in
+2. **Dashboard**: View organized memories
+3. **Add Memory**: Create new travel memories
+4. **Search/Filter**: Find specific memories
+5. **Profile**: Manage account and logout
+
+## 🚧 Development Notes
+
+### Photo Handling
+- Images are stored as Base64 strings in MongoDB
+- Photo picker integration with expo-image-picker (placeholder implemented)
+- Support for both photo library and camera
+
+### Date Handling
+- Date pickers for selecting travel dates
+- Date validation and formatting
+- Year/month grouping for organization
+
+### Authentication Flow
+- JWT tokens stored in AsyncStorage
+- Automatic redirect based on authentication state
+- Secure logout with token cleanup
+
+## 🔄 Future Enhancements
+
+- [ ] Real photo picker implementation
+- [ ] Memory details/edit screens
+- [ ] Map integration for location links
+- [ ] Memory sharing features
+- [ ] Offline support
+- [ ] Image optimization and compression
+- [ ] Push notifications
+- [ ] Dark theme support
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+---
+
+**Voyage** - Your personal travel memory keeper, built with modern technologies for seamless mobile experience.
