@@ -7,8 +7,9 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
-  Image, // Add Image import
+  Image,
   StyleSheet,
+  Dimensions,
 } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,6 +18,9 @@ import * as ImagePicker from 'expo-image-picker';
 import Toast from 'react-native-toast-message';
 import { useAuth } from '../../contexts/AuthContext';
 import { apiService } from '../../utils/api';
+import { LinearGradient } from 'expo-linear-gradient';
+
+const { width } = Dimensions.get('window');
 
 export default function AddMemoryScreen() {
   const { user } = useAuth();
@@ -36,7 +40,11 @@ export default function AddMemoryScreen() {
   const [showToDatePicker, setShowToDatePicker] = useState(false);
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString();
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
   };
 
   const handleSave = async () => {
@@ -130,7 +138,7 @@ export default function AddMemoryScreen() {
       let result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
         aspect: [4, 3],
-        quality: 0.5,
+        quality: 0.8,
         base64: true,
       });
 
@@ -144,301 +152,436 @@ export default function AddMemoryScreen() {
   };
 
   return (
-    <ScrollView style={styles.scrollView}>
-      <View style={styles.container}>
-        {/* Header */}
+    <View style={styles.container}>
+      {/* Header Gradient */}
+      <LinearGradient
+        colors={['#7c3aed', '#8b5cf6']}
+        style={styles.headerGradient}
+      >
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => router.back()}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color="#0c4a6e" />
+            <Ionicons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Add New Memory</Text>
+          <View style={styles.placeholder} />
         </View>
+      </LinearGradient>
 
-        {/* Photo Selection */}
-        <View style={styles.photoSection}>
-          <Text style={styles.labelRequired}>Photo *</Text>
-          <TouchableOpacity
-            onPress={selectPhoto}
-            style={styles.photoPicker}
-            activeOpacity={0.7}
-          >
-          {photo ? (
-            <Image
-              source={{ uri: `data:image/jpeg;base64,${photo}` }}
-              style={styles.photoImage}
-              resizeMode="cover"
-            />
-          ) : (
-            <View style={styles.photoPlaceholder}>
-              <Ionicons name="camera" size={48} color="#cbd5e1" />
-              <Text style={styles.photoText}>Tap to select photo</Text>
-            </View>
-          )}
-          </TouchableOpacity>
-        </View>
-
-        {/* Form Fields */}
-        <View style={styles.form}>
-          <View style={styles.inputGroup}>
-            <Text style={styles.labelRequired}>Title *</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter memory title"
-              value={title}
-              onChangeText={setTitle}
-              autoCapitalize="words"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.labelRequired}>Place Name *</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Where was this memory made?"
-              value={placeName}
-              onChangeText={setPlaceName}
-              autoCapitalize="words"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Description</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Tell us about this memory..."
-              value={description}
-              onChangeText={setDescription}
-              multiline
-              numberOfLines={3}
-              textAlignVertical="top"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Location Link</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Google Maps link (optional)"
-              value={locationLink}
-              onChangeText={setLocationLink}
-              autoCapitalize="none"
-              keyboardType="url"
-            />
-          </View>
-
-          {/* Dates */}
-          <View style={styles.dateRow}>
-            <View style={styles.dateGroup}>
-              <Text style={styles.labelRequired}>From Date *</Text>
-              <TouchableOpacity
-                onPress={() => setShowFromDatePicker(true)}
-                style={styles.dateButton}
-              >
-                <Text style={styles.dateText}>{formatDate(fromDate)}</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.dateGroup}>
-              <Text style={styles.labelRequired}>To Date *</Text>
-              <TouchableOpacity
-                onPress={() => setShowToDatePicker(true)}
-                style={styles.dateButton}
-              >
-                <Text style={styles.dateText}>{formatDate(toDate)}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Date Pickers */}
-          {showFromDatePicker && (
-            <DateTimePicker
-              value={fromDate}
-              mode="date"
-              display="default"
-              onChange={(event, selectedDate) => {
-                setShowFromDatePicker(false);
-                if (selectedDate) {
-                  setFromDate(selectedDate);
-                }
-              }}
-            />
-          )}
-
-          {showToDatePicker && (
-            <DateTimePicker
-              value={toDate}
-              mode="date"
-              display="default"
-              onChange={(event, selectedDate) => {
-                setShowToDatePicker(false);
-                if (selectedDate) {
-                  setToDate(selectedDate);
-                }
-              }}
-            />
-          )}
-        </View>
-
-        {/* Buttons */}
-        <View style={styles.buttonRow}>
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={clearForm}
-            disabled={loading}
-          >
-            <Text style={styles.clearButtonText}>
-              Clear Form
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.saveButton}
-            onPress={handleSave}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="white" />
+      <ScrollView 
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.content}>
+          {/* Photo Selection */}
+          <View style={styles.photoSection}>
+            <Text style={styles.labelRequired}>Photo *</Text>
+            <TouchableOpacity
+              onPress={selectPhoto}
+              style={styles.photoPicker}
+              activeOpacity={0.7}
+            >
+            {photo ? (
+              <View style={styles.photoContainer}>
+                <Image
+                  source={{ uri: `data:image/jpeg;base64,${photo}` }}
+                  style={styles.photoImage}
+                  resizeMode="cover"
+                />
+                <View style={styles.photoOverlay}>
+                  <Ionicons name="camera" size={32} color="white" />
+                  <Text style={styles.photoOverlayText}>Change Photo</Text>
+                </View>
+              </View>
             ) : (
-              <Text style={styles.saveButtonText}>
-                Save Memory
-              </Text>
+              <View style={styles.photoPlaceholder}>
+                <Ionicons name="camera" size={48} color="#7c3aed" />
+                <Text style={styles.photoText}>Tap to select a photo</Text>
+                <Text style={styles.photoSubText}>Recommended: 4:3 ratio</Text>
+              </View>
             )}
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
+
+          {/* Form Fields */}
+          <View style={styles.form}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.labelRequired}>Title *</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter memory title"
+                placeholderTextColor="#a78bfa"
+                value={title}
+                onChangeText={setTitle}
+                autoCapitalize="words"
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.labelRequired}>Place Name *</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Where was this memory made?"
+                placeholderTextColor="#a78bfa"
+                value={placeName}
+                onChangeText={setPlaceName}
+                autoCapitalize="words"
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Description</Text>
+              <TextInput
+                style={[styles.input, styles.textArea]}
+                placeholder="Tell us about this memory..."
+                placeholderTextColor="#a78bfa"
+                value={description}
+                onChangeText={setDescription}
+                multiline
+                numberOfLines={4}
+                textAlignVertical="top"
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Location Link</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Google Maps link (optional)"
+                placeholderTextColor="#a78bfa"
+                value={locationLink}
+                onChangeText={setLocationLink}
+                autoCapitalize="none"
+                keyboardType="url"
+              />
+            </View>
+
+            {/* Dates */}
+            <View style={styles.dateRow}>
+              <View style={styles.dateGroup}>
+                <Text style={styles.labelRequired}>From Date *</Text>
+                <TouchableOpacity
+                  onPress={() => setShowFromDatePicker(true)}
+                  style={styles.dateButton}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="calendar" size={20} color="#7c3aed" style={styles.dateIcon} />
+                  <Text style={styles.dateText}>{formatDate(fromDate)}</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.dateGroup}>
+                <Text style={styles.labelRequired}>To Date *</Text>
+                <TouchableOpacity
+                  onPress={() => setShowToDatePicker(true)}
+                  style={styles.dateButton}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="calendar" size={20} color="#7c3aed" style={styles.dateIcon} />
+                  <Text style={styles.dateText}>{formatDate(toDate)}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Date Pickers */}
+            {showFromDatePicker && (
+              <DateTimePicker
+                value={fromDate}
+                mode="date"
+                display="spinner"
+                themeVariant="light"
+                onChange={(event, selectedDate) => {
+                  setShowFromDatePicker(false);
+                  if (selectedDate) {
+                    setFromDate(selectedDate);
+                  }
+                }}
+              />
+            )}
+
+            {showToDatePicker && (
+              <DateTimePicker
+                value={toDate}
+                mode="date"
+                display="spinner"
+                themeVariant="light"
+                onChange={(event, selectedDate) => {
+                  setShowToDatePicker(false);
+                  if (selectedDate) {
+                    setToDate(selectedDate);
+                  }
+                }}
+              />
+            )}
+          </View>
+
+          {/* Buttons */}
+          <View style={styles.buttonRow}>
+            <TouchableOpacity
+              style={styles.clearButton}
+              onPress={clearForm}
+              disabled={loading}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="trash-outline" size={20} color="#7c3aed" />
+              <Text style={styles.clearButtonText}>
+                Clear Form
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.saveButton}
+              onPress={handleSave}
+              disabled={loading}
+              activeOpacity={0.8}
+            >
+              {loading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <>
+                  <Ionicons name="save-outline" size={20} color="white" />
+                  <Text style={styles.saveButtonText}>
+                    Save Memory
+                  </Text>
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-    backgroundColor: '#f9fafb',
-  },
   container: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    paddingTop: 40,
+    flex: 1,
+    backgroundColor: '#faf5ff',
+  },
+  headerGradient: {
+    paddingTop: 50,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    shadowColor: '#7c3aed',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 24,
+    justifyContent: 'space-between',
+    backgroundColor: 'transparent',
   },
   backButton: {
-    marginRight: 16,
     padding: 8,
-    backgroundColor: 'white',
-    borderRadius: 50,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#111827',
+    color: 'white',
+    fontFamily: 'Inter-Bold',
+  },
+  placeholder: {
+    width: 40,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  content: {
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
   photoSection: {
     marginBottom: 24,
   },
   labelRequired: {
-    color: '#374151',
-    marginBottom: 12,
-    fontWeight: '500',
+    color: '#4c1d95',
+    marginBottom: 8,
+    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 16,
   },
   label: {
-    color: '#374151',
+    color: '#4c1d95',
     marginBottom: 8,
-    fontWeight: '500',
+    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 16,
   },
   photoPicker: {
     backgroundColor: 'white',
     borderWidth: 2,
     borderStyle: 'dashed',
-    borderColor: '#d1d5db',
-    height: 160,
-    borderRadius: 8,
+    borderColor: '#7c3aed',
+    height: 200,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
+    shadowColor: '#7c3aed',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  photoContainer: {
+    width: '100%',
+    height: '100%',
+    position: 'relative',
   },
   photoImage: {
     width: '100%',
     height: '100%',
-    borderRadius: 8,
+  },
+  photoOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(124, 58, 237, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  photoOverlayText: {
+    color: 'white',
+    marginTop: 8,
+    fontFamily: 'Inter-Medium',
   },
   photoPlaceholder: {
     alignItems: 'center',
+    padding: 20,
   },
   photoText: {
-    color: '#6b7280',
-    marginTop: 8,
+    color: '#7c3aed',
+    marginTop: 12,
+    fontSize: 16,
+    fontFamily: 'Inter-Medium',
+  },
+  photoSubText: {
+    color: '#a78bfa',
+    marginTop: 4,
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
   },
   form: {
     marginBottom: 16,
   },
   inputGroup: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
+    borderColor: '#ddd6fe',
+    borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    color: '#111827',
+    paddingVertical: 14,
+    color: '#4c1d95',
     backgroundColor: 'white',
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  textArea: {
+    minHeight: 100,
+    paddingTop: 14,
   },
   dateRow: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   dateGroup: {
     flex: 1,
+    marginHorizontal: 5,
   },
   dateButton: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
+    borderColor: '#ddd6fe',
+    borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
     backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  dateIcon: {
+    marginRight: 8,
   },
   dateText: {
-    color: '#111827',
+    color: '#4c1d95',
+    fontFamily: 'Inter-Regular',
   },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 32,
+    marginTop: 24,
+    marginBottom: 40,
   },
   clearButton: {
-    backgroundColor: '#6b7280',
-    borderRadius: 8,
+    backgroundColor: '#ede9fe',
+    borderRadius: 12,
     paddingVertical: 16,
+    paddingHorizontal: 20,
     flex: 1,
-    marginRight: 8,
+    marginRight: 12,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#7c3aed',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   clearButtonText: {
-    color: 'white',
+    color: '#7c3aed',
     textAlign: 'center',
     fontWeight: '600',
     fontSize: 16,
+    fontFamily: 'Inter-SemiBold',
+    marginLeft: 8,
   },
   saveButton: {
-    backgroundColor: '#0ea5e9',
-    borderRadius: 8,
+    backgroundColor: '#7c3aed',
+    borderRadius: 12,
     paddingVertical: 16,
+    paddingHorizontal: 20,
     flex: 1,
-    marginLeft: 8,
+    marginLeft: 12,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#7c3aed',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   saveButtonText: {
     color: 'white',
     textAlign: 'center',
     fontWeight: '600',
-    fontSize: 18,
+    fontSize: 16,
+    fontFamily: 'Inter-SemiBold',
+    marginLeft: 8,
   },
 });
