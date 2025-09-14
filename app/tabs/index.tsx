@@ -108,41 +108,79 @@ export default function Dashboard() {
     setSelectedMonth(undefined);
   };
 
+  const handleDeleteMemory = async (memory: Memory) => {
+    Alert.alert(
+      'Delete Memory',
+      'Are you sure you want to delete this memory? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: async () => {
+            try {
+              await apiService.deleteMemory(memory._id);
+              // Remove from local state or refetch
+              await fetchMemories(true);
+              Toast.show({
+                type: 'success',
+                text1: 'Memory deleted',
+                text2: 'The memory has been removed successfully.',
+              });
+            } catch (error) {
+              console.error('Error deleting memory:', error);
+              Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Failed to delete memory. Please try again.',
+              });
+            }
+          }},
+      ]
+    );
+  };
+
   const renderMemoryCard = (memory: Memory) => (
-    <TouchableOpacity
-      key={memory._id}
-      style={styles.memoryCard}
-      onPress={() => router.push(`/memory/${memory._id}`)}
-      activeOpacity={0.8}
-    >
-      <Image
-        source={{ uri: `data:image/jpeg;base64,${memory.photo}` }}
-        style={styles.memoryImage}
-        resizeMode="cover"
-      />
-      <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.8)']}
-        style={styles.memoryGradient}
-      />
-      <View style={styles.memoryDetails}>
-        <Text style={styles.memoryTitle} numberOfLines={1}>{memory.title}</Text>
-        <View style={styles.memoryMeta}>
-          <View style={styles.memoryMetaItem}>
-            <Ionicons name="location-outline" size={12} color="#e5e7eb" />
-            <Text style={styles.memoryPlace} numberOfLines={1}>{memory.placeName}</Text>
+    <View key={memory._id} style={styles.memoryCard}>
+      <TouchableOpacity
+        style={styles.memoryCardTouchable}
+        onPress={() => router.push(`/memory/${memory._id}`)}
+        activeOpacity={0.8}
+      >
+        <Image
+          source={{ uri: `data:image/jpeg;base64,${memory.photo}` }}
+          style={styles.memoryImage}
+          resizeMode="cover"
+        />
+        <LinearGradient
+          colors={['transparent', 'rgba(0,0,0,0.8)']}
+          style={styles.memoryGradient}
+        />
+        <View style={styles.memoryDetails}>
+          <Text style={styles.memoryTitle} numberOfLines={1}>{memory.title}</Text>
+          <View style={styles.memoryMeta}>
+            <View style={styles.memoryMetaItem}>
+              <Ionicons name="location-outline" size={12} color="#e5e7eb" />
+              <Text style={styles.memoryPlace} numberOfLines={1}>{memory.placeName}</Text>
+            </View>
+            <View style={styles.memoryMetaItem}>
+              <Ionicons name="calendar-outline" size={12} color="#e5e7eb" />
+              <Text style={styles.memoryDate}>{memory.dateRange}</Text>
+            </View>
           </View>
-          <View style={styles.memoryMetaItem}>
-            <Ionicons name="calendar-outline" size={12} color="#e5e7eb" />
-            <Text style={styles.memoryDate}>{memory.dateRange}</Text>
-          </View>
+          {memory.description && (
+            <Text style={styles.memoryDescription} numberOfLines={2}>
+              {memory.description}
+            </Text>
+          )}
         </View>
-        {memory.description && (
-          <Text style={styles.memoryDescription} numberOfLines={2}>
-            {memory.description}
-          </Text>
-        )}
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => handleDeleteMemory(memory)}
+        activeOpacity={0.8}
+      >
+        <Ionicons name="trash-outline" size={20} color="white" />
+      </TouchableOpacity>
+    </View>
   );
 
   if (loading && !refreshing) {
@@ -565,6 +603,11 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
+  memoryCardTouchable: {
+    width: '100%',
+    height: '100%',
+    position: 'relative',
+  },
   memoryImage: {
     width: '100%',
     height: '100%',
@@ -616,5 +659,15 @@ const styles = StyleSheet.create({
     color: '#e5e7eb',
     fontSize: 14,
     fontFamily: 'Inter-Regular',
+  },
+  deleteButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(239, 68, 68, 0.8)',
+    padding: 8,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

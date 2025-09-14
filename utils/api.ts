@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://192.168.0.106:5000'; // Change this to your backend URL
+const API_BASE_URL = 'http://192.168.0.102:5000'; // Change this to your backend URL
 
 export interface Memory {
   _id: string;
@@ -103,7 +103,6 @@ class ApiService {
     return date.toISOString().split('T')[0]; // YYYY-MM-DD format
   }
 
-  // Helper function to parse date from API
   parseDate(dateString: string): Date {
     return new Date(dateString);
   }
