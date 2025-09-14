@@ -14,6 +14,7 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
+import Toast from 'react-native-toast-message';
 import { useAuth } from '../../contexts/AuthContext';
 import { apiService } from '../../utils/api';
 
@@ -41,19 +42,35 @@ export default function AddMemoryScreen() {
   const handleSave = async () => {
     // Validation
     if (!title.trim()) {
-      Alert.alert('Error', 'Title is required');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Title is required',
+      });
       return;
     }
     if (!placeName.trim()) {
-      Alert.alert('Error', 'Place name is required');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Place name is required',
+      });
       return;
     }
     if (!photo) {
-      Alert.alert('Error', 'Please select a photo');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Please select a photo',
+      });
       return;
     }
     if (fromDate > toDate) {
-      Alert.alert('Error', 'From date cannot be after to date');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'From date cannot be after to date',
+      });
       return;
     }
 

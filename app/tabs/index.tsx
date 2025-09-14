@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Link, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
 import { useAuth } from '../../contexts/AuthContext';
 import { apiService, Memory, GroupedMemories, ApiMemoriesResponse } from '../../utils/api';
 
@@ -43,7 +44,11 @@ export default function Dashboard() {
       setGroupedMemories(response.groupedMemories);
     } catch (error) {
       console.error('Error fetching memories:', error);
-      Alert.alert('Error', 'Failed to load memories');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Failed to load memories',
+      });
     } finally {
       setLoading(false);
       setRefreshing(false);

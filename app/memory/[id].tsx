@@ -12,6 +12,7 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Linking from 'expo-linking';
+import Toast from 'react-native-toast-message';
 import { apiService, Memory } from '../../utils/api';
 
 export default function MemoryDetailsScreen() {
@@ -29,12 +30,20 @@ export default function MemoryDetailsScreen() {
         if (foundMemory) {
           setMemory(foundMemory);
         } else {
-          Alert.alert('Error', 'Memory not found');
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Memory not found',
+          });
           router.back();
         }
       } catch (error) {
         console.error('Error fetching memory:', error);
-        Alert.alert('Error', 'Failed to load memory');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Failed to load memory',
+        });
         router.back();
       } finally {
         setLoading(false);
@@ -49,7 +58,11 @@ export default function MemoryDetailsScreen() {
   const openLocation = () => {
     if (memory?.locationLink) {
       Linking.openURL(memory.locationLink).catch(() => {
-        Alert.alert('Error', 'Unable to open link');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Unable to open link',
+        });
       });
     }
   };

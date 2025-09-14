@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { Alert } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 const API_BASE_URL = 'http://192.168.0.106:5000'; // Change this to your backend URL
 
@@ -90,7 +91,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error: any) {
       console.error('Signup error:', error);
       const message = error.response?.data?.message || 'Signup failed';
-      Alert.alert('Signup Failed', message);
+      Toast.show({
+        type: 'error',
+        text1: 'Signup Failed',
+        text2: message,
+      });
       return false;
     } finally {
       setLoading(false);
@@ -122,7 +127,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error: any) {
       console.error('Login error:', error);
       const message = error.response?.data?.message || 'Login failed';
-      Alert.alert('Login Failed', message);
+      Toast.show({
+        type: 'error',
+        text1: 'Login Failed',
+        text2: message,
+      });
       return false;
     } finally {
       setLoading(false);

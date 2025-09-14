@@ -1,5 +1,6 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import Toast from "react-native-toast-message";
 import { AuthProvider } from "../contexts/AuthContext";
 
 export default function RootLayout() {
@@ -32,6 +33,7 @@ export default function RootLayout() {
           }}
         />
       </Stack>
+      <Toast />
     </AuthProvider>
   );
 }
