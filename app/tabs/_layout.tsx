@@ -1,6 +1,6 @@
-import React from 'react';
-import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { Tabs } from 'expo-router';
+import React from 'react';
 
 export default function TabLayout() {
   return (
@@ -12,15 +12,7 @@ export default function TabLayout() {
         borderTopWidth: 1,
         borderTopColor: '#f1f5f9',
       },
-      headerStyle: {
-        backgroundColor: '#ffffff',
-        borderBottomWidth: 1,
-        borderBottomColor: '#f1f5f9',
-      },
-      headerTintColor: '#0c4a6e',
-      headerTitleStyle: {
-        fontWeight: 'bold',
-      },
+      headerShown: false,
     }}>
       <Tabs.Screen
         name="index"

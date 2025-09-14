@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   StyleSheet,
 } from 'react-native';
 import { Link, router } from 'expo-router';
@@ -56,7 +57,8 @@ export default function SignupScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.keyboardAvoiding}
     >
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+        <View style={styles.container}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>
             Voyage
@@ -123,6 +125,7 @@ export default function SignupScreen() {
           style={styles.button}
           onPress={handleSignup}
           disabled={loading}
+          activeOpacity={0.7}
         >
           {loading ? (
             <ActivityIndicator color="white" />
@@ -142,6 +145,7 @@ export default function SignupScreen() {
           </Link>
         </View>
       </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -150,6 +154,9 @@ const styles = StyleSheet.create({
   keyboardAvoiding: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  scrollContainer: {
+    flexGrow: 1,
   },
   container: {
     flex: 1,

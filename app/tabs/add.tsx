@@ -163,6 +163,7 @@ export default function AddMemoryScreen() {
           <TouchableOpacity
             onPress={selectPhoto}
             style={styles.photoPicker}
+            activeOpacity={0.7}
           >
           {photo ? (
             <Image
@@ -320,6 +321,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
     paddingVertical: 16,
+    paddingTop: 40,
   },
   header: {
     flexDirection: 'row',

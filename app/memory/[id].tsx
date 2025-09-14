@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  ActivityIndicator,
-  Alert,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Linking from 'expo-linking';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import Toast from 'react-native-toast-message';
 import { apiService, Memory } from '../../utils/api';
 
@@ -81,8 +81,8 @@ export default function MemoryDetailsScreen() {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
@@ -151,8 +151,8 @@ export default function MemoryDetailsScreen() {
             </View>
           )}
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
