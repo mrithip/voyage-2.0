@@ -120,7 +120,10 @@ export default function AddMemoryScreen() {
       setToDate(new Date());
       setPhoto(null);
 
-      showAlert('Success', 'Memory created successfully!', 'success', () => router.back());
+      showAlert('Success', 'Memory created successfully!', 'success', () => {
+        setAlertVisible(false);
+        router.back();
+      });
     } catch (error) {
       console.error('Error creating memory:', error);
   showAlert('Error', 'Failed to create memory. Please try again.', 'error');
@@ -172,7 +175,13 @@ export default function AddMemoryScreen() {
         title={alertTitle}
         message={alertMessage}
         type={alertType}
-        onClose={() => setAlertVisible(false)}
+        onClose={() => {
+          setAlertVisible(false);
+          setAlertTitle('');
+          setAlertMessage('');
+          setAlertType('info');
+          setAlertOnConfirm(undefined);
+        }}
         onConfirm={alertOnConfirm}
         confirmText={alertType === 'success' ? 'OK' : alertType === 'error' ? 'OK' : alertType === 'warning' ? 'OK' : 'OK'}
         cancelText={undefined}
