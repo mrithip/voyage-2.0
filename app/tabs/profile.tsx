@@ -1,39 +1,41 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Alert,
-  StyleSheet,
-  Dimensions,
-} from 'react-native';
-import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '../../contexts/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
+import React from 'react';
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import CustomAlert from '../../components/CustomAlert';
+import { useAuth } from '../../contexts/AuthContext';
 
 const { width } = Dimensions.get('window');
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
 
+  // Custom Alert State
+  const [alertVisible, setAlertVisible] = React.useState(false);
+  const [alertTitle, setAlertTitle] = React.useState('');
+  const [alertMessage, setAlertMessage] = React.useState('');
+  const [alertType, setAlertType] = React.useState<'success' | 'error' | 'info' | 'warning'>('info');
+  const [alertOnConfirm, setAlertOnConfirm] = React.useState<(() => void) | undefined>(undefined);
+
+  const showAlert = (title: string, message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info', onConfirm?: () => void) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertOnConfirm(() => onConfirm);
+    setAlertVisible(true);
+  };
+
   const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Logout', style: 'destructive', onPress: async () => {
-            await logout();
-            router.replace({ pathname: "/auth/login" });
-          }},
-      ]
-    );
+    showAlert('Logout', 'Are you sure you want to logout?', 'warning', async () => {
+      setAlertVisible(false);
+      await logout();
+      router.replace({ pathname: "/auth/login" });
+    });
   };
 
   const showTermsAndConditions = () => {
-    Alert.alert(
+    showAlert(
       'Terms and Conditions',
       'Welcome to Voyage! By using our app, you agree to the following terms:\n\n' +
       '1. Acceptance of Terms: By downloading or using Voyage, you agree to these terms.\n\n' +
@@ -45,12 +47,12 @@ export default function ProfileScreen() {
       '7. Limitation of Liability: The app is provided "as is".\n\n' +
       '8. Changes to Terms: We may update these terms at any time.\n\n' +
       'Contact us at support@voyageapp.com for questions.',
-      [{ text: 'OK' }]
+      'info'
     );
   };
 
   const showPrivacyPolicy = () => {
-    Alert.alert(
+    showAlert(
       'Privacy Policy',
       'Voyage values your privacy. Our Privacy Policy explains how we collect, use, and protect your information:\n\n' +
       '1. Information We Collect:\n' +
@@ -71,7 +73,7 @@ export default function ProfileScreen() {
       '6. Children\'s Privacy: App is for users 13+\n\n' +
       '7. Changes to Policy: We may update this policy\n\n' +
       'Contact support@voyageapp.com for privacy concerns.',
-      [{ text: 'OK' }]
+      'info'
     );
   };
 
@@ -95,6 +97,16 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
+      <CustomAlert
+        visible={alertVisible}
+        title={alertTitle}
+        message={alertMessage}
+        type={alertType}
+        onClose={() => setAlertVisible(false)}
+        onConfirm={alertOnConfirm}
+        confirmText={alertType === 'warning' ? 'Logout' : 'OK'}
+        cancelText={alertType === 'info' ? undefined : 'Cancel'}
+      />
       {/* Header Gradient */}
       <LinearGradient
         colors={['#7c3aed', '#8b5cf6']}

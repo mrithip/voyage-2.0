@@ -1,24 +1,25 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
-  Alert,
-  Image,
-  StyleSheet,
-  Dimensions,
-} from 'react-native';
-import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
+import React, { useState } from 'react';
+import {
+  ActivityIndicator,
+  Dimensions,
+  // Alert,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Toast from 'react-native-toast-message';
+import CustomAlert from '../../components/CustomAlert';
 import { useAuth } from '../../contexts/AuthContext';
 import { apiService } from '../../utils/api';
-import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
 
@@ -38,6 +39,21 @@ export default function AddMemoryScreen() {
   // Date picker state
   const [showFromDatePicker, setShowFromDatePicker] = useState(false);
   const [showToDatePicker, setShowToDatePicker] = useState(false);
+
+  // Custom Alert State
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState<'success' | 'error' | 'info' | 'warning'>('info');
+  const [alertOnConfirm, setAlertOnConfirm] = useState<(() => void) | undefined>(undefined);
+
+  const showAlert = (title: string, message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info', onConfirm?: () => void) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertOnConfirm(() => onConfirm);
+    setAlertVisible(true);
+  };
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', {
@@ -104,12 +120,10 @@ export default function AddMemoryScreen() {
       setToDate(new Date());
       setPhoto(null);
 
-      Alert.alert('Success', 'Memory created successfully!', [
-        { text: 'OK', onPress: () => router.back() }
-      ]);
+      showAlert('Success', 'Memory created successfully!', 'success', () => router.back());
     } catch (error) {
       console.error('Error creating memory:', error);
-      Alert.alert('Error', 'Failed to create memory. Please try again.');
+  showAlert('Error', 'Failed to create memory. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
@@ -131,7 +145,7 @@ export default function AddMemoryScreen() {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to make this work!');
+  showAlert('Permission Denied', 'Sorry, we need camera roll permissions to make this work!', 'warning');
         return;
       }
 
@@ -147,12 +161,22 @@ export default function AddMemoryScreen() {
       }
     } catch (error) {
       console.error('Error selecting photo:', error);
-      Alert.alert('Error', 'Failed to select photo. Please try again.');
+  showAlert('Error', 'Failed to select photo. Please try again.', 'error');
     }
   };
 
   return (
     <View style={styles.container}>
+      <CustomAlert
+        visible={alertVisible}
+        title={alertTitle}
+        message={alertMessage}
+        type={alertType}
+        onClose={() => setAlertVisible(false)}
+        onConfirm={alertOnConfirm}
+        confirmText={alertType === 'success' ? 'OK' : alertType === 'error' ? 'OK' : alertType === 'warning' ? 'OK' : 'OK'}
+        cancelText={undefined}
+      />
       {/* Header Gradient */}
       <LinearGradient
         colors={['#7c3aed', '#8b5cf6']}

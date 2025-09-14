@@ -1,23 +1,23 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Link, router } from 'expo-router';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
+  ActivityIndicator,
+  Dimensions,
   Image,
   RefreshControl,
-  TextInput,
-  ActivityIndicator,
-  Alert,
+  ScrollView,
   StyleSheet,
-  Dimensions,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
-import { Link, router } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
+import CustomAlert from '../../components/CustomAlert';
 import { useAuth } from '../../contexts/AuthContext';
-import { apiService, Memory, GroupedMemories, ApiMemoriesResponse } from '../../utils/api';
-import { LinearGradient } from 'expo-linear-gradient';
+import { ApiMemoriesResponse, apiService, GroupedMemories, Memory } from '../../utils/api';
 
 const { width } = Dimensions.get('window');
 
@@ -33,6 +33,12 @@ export default function Dashboard() {
   const [selectedMonth, setSelectedMonth] = useState<number | undefined>();
   const [expandedYears, setExpandedYears] = useState<Set<string>>(new Set());
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  // Custom Alert State
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState<'success' | 'error' | 'info' | 'warning'>('info');
+  const [alertOnConfirm, setAlertOnConfirm] = useState<(() => void) | undefined>(undefined);
 
   const fetchMemories = useCallback(async (showLoading = true) => {
     try {
@@ -88,17 +94,15 @@ export default function Dashboard() {
   };
 
   const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Logout', style: 'destructive', onPress: async () => {
-            await logout();
-            router.replace({ pathname: "/auth/login" });
-          }},
-      ]
-    );
+    setAlertTitle('Logout');
+    setAlertMessage('Are you sure you want to logout?');
+    setAlertType('warning');
+    setAlertOnConfirm(() => async () => {
+      setAlertVisible(false);
+      await logout();
+      router.replace({ pathname: "/auth/login" });
+    });
+    setAlertVisible(true);
   };
 
   const clearFilters = () => {
@@ -108,33 +112,30 @@ export default function Dashboard() {
     setSelectedMonth(undefined);
   };
 
-  const handleDeleteMemory = async (memory: Memory) => {
-    Alert.alert(
-      'Delete Memory',
-      'Are you sure you want to delete this memory? This action cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: async () => {
-            try {
-              await apiService.deleteMemory(memory._id);
-              // Remove from local state or refetch
-              await fetchMemories(true);
-              Toast.show({
-                type: 'success',
-                text1: 'Memory deleted',
-                text2: 'The memory has been removed successfully.',
-              });
-            } catch (error) {
-              console.error('Error deleting memory:', error);
-              Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: 'Failed to delete memory. Please try again.',
-              });
-            }
-          }},
-      ]
-    );
+  const handleDeleteMemory = (memory: Memory) => {
+    setAlertTitle('Delete Memory');
+    setAlertMessage('Are you sure you want to delete this memory? This action cannot be undone.');
+    setAlertType('error');
+    setAlertOnConfirm(() => async () => {
+      setAlertVisible(false);
+      try {
+        await apiService.deleteMemory(memory._id);
+        await fetchMemories(true);
+        Toast.show({
+          type: 'success',
+          text1: 'Memory deleted',
+          text2: 'The memory has been removed successfully.',
+        });
+      } catch (error) {
+        console.error('Error deleting memory:', error);
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Failed to delete memory. Please try again.',
+        });
+      }
+    });
+    setAlertVisible(true);
   };
 
   const renderMemoryCard = (memory: Memory) => (
@@ -194,6 +195,16 @@ export default function Dashboard() {
 
   return (
     <View style={styles.container}>
+      <CustomAlert
+        visible={alertVisible}
+        title={alertTitle}
+        message={alertMessage}
+        type={alertType}
+        onClose={() => setAlertVisible(false)}
+        onConfirm={alertOnConfirm}
+        confirmText={alertType === 'warning' ? 'Logout' : alertType === 'error' ? 'Delete' : 'OK'}
+        cancelText={alertType === 'info' ? undefined : 'Cancel'}
+      />
       {/* Header with user info and logout */}
       <LinearGradient
         colors={['#7c3aed', '#8b5cf6']}
