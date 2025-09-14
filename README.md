@@ -9,7 +9,9 @@ A full-stack React Native (Expo) application for storing and organizing travel m
 - **Photo Storage**: Base64-encoded images stored in MongoDB
 - **Year-Month Organization**: Memories organized in folder-like structure
 - **Search & Filter**: Find memories by title, place, or date
-- **Modern UI**: Clean interface built with TailwindCSS (NativeWind)
+- **Custom Styled Alerts**: All alert dialogs use a beautiful, consistent modal for better UX
+- **Safe Area Support**: All screens use SafeAreaView to avoid content hiding under the status bar
+- **Improved Navigation**: No duplicate alerts or navigation issues when adding multiple memories
 - **Cross-Platform**: Works on iOS and Android
 
 ## 🏗️ Architecture
@@ -25,8 +27,9 @@ A full-stack React Native (Expo) application for storing and organizing travel m
 - Expo Router for navigation
 - Authentication context for state management
 - API service layer for HTTP requests
-- NativeWind (TailwindCSS) for styling
 - Image picker for photo selection
+- CustomAlert modal for all alert dialogs
+- SafeAreaView for all screens
 
 ## 📁 Project Structure
 
@@ -151,13 +154,15 @@ All memory endpoints require authentication (JWT token).
 - **TailwindCSS + NativeWind**: Utility-first CSS framework
 - **Expo Vector Icons**: Icon library
 - **Custom Components**: Reusable UI components with consistent styling
+- **CustomAlert Modal**: Beautiful, animated alert dialogs for all user feedback
+- **SafeAreaView**: Ensures content is always visible and not hidden by device UI
 - **Responsive Design**: Works across different screen sizes
 
 ## 📝 Usage
 
 1. **Signup/Login**: Create account or sign in
 2. **Dashboard**: View organized memories
-3. **Add Memory**: Create new travel memories
+3. **Add Memory**: Create new travel memories (with instant feedback and smooth navigation)
 4. **Search/Filter**: Find specific memories
 5. **Profile**: Manage account and logout
 
@@ -177,6 +182,7 @@ All memory endpoints require authentication (JWT token).
 - JWT tokens stored in AsyncStorage
 - Automatic redirect based on authentication state
 - Secure logout with token cleanup
+- All authentication and error alerts use the new CustomAlert modal
 
 ## 🔄 Future Enhancements
 
@@ -188,6 +194,7 @@ All memory endpoints require authentication (JWT token).
 - [ ] Image optimization and compression
 - [ ] Push notifications
 - [ ] Dark theme support
+- [ ] More customizable alert/modal options
 
 ## 📄 License
 
