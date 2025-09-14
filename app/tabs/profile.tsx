@@ -240,6 +240,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 20,
     paddingVertical: 20,
+    marginBottom: 70,
   },
   avatarSection: {
     alignItems: 'center',

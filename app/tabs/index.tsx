@@ -368,6 +368,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#faf5ff',
+    marginBottom: 70,
   },
   headerGradient: {
     paddingTop: 50,
@@ -514,7 +515,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 16,
     padding: 20,
-    marginBottom: 16,
+    marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,

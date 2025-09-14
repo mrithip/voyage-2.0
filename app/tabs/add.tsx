@@ -400,6 +400,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 20,
     paddingVertical: 20,
+    marginBottom: 30,
   },
   photoSection: {
     marginBottom: 24,

@@ -26,7 +26,7 @@ export default function RootLayout() {
           name="memory"
           options={{
             headerShown: false,
-            presentation: 'fullScreenModal',
+            // presentation: 'fullScreenModal',
           }}
         />
           <Stack.Screen
