@@ -10,10 +10,14 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  Dimensions,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { apiService, Memory } from '../../utils/api';
+import { LinearGradient } from 'expo-linear-gradient';
+
+const { width } = Dimensions.get('window');
 
 export default function MemoryDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -70,8 +74,8 @@ export default function MemoryDetailsScreen() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0ea5e9" />
-        <Text style={styles.loadingText}>Loading memory...</Text>
+        <ActivityIndicator size="large" color="#7c3aed" />
+        <Text style={styles.loadingText}>Loading your memory...</Text>
       </View>
     );
   }
@@ -81,19 +85,29 @@ export default function MemoryDetailsScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-        {/* Header */}
+    <SafeAreaView style={styles.safeArea}>
+      {/* Header Gradient */}
+      <LinearGradient
+        colors={['#7c3aed', '#8b5cf6']}
+        style={styles.headerGradient}
+      >
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => router.back()}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color="#0c4a6e" />
+            <Ionicons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Memory Details</Text>
+          <View style={styles.placeholder} />
         </View>
+      </LinearGradient>
 
+      <ScrollView 
+        style={styles.container} 
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Photo */}
         <View style={styles.photoContainer}>
           <Image
@@ -101,55 +115,90 @@ export default function MemoryDetailsScreen() {
             style={styles.photo}
             resizeMode="cover"
           />
+          <LinearGradient
+            colors={['transparent', 'rgba(124, 58, 237, 0.1)']}
+            style={styles.photoGradient}
+          />
         </View>
 
-        {/* Details */}
-        <View style={styles.detailsContainer}>
-          <View style={styles.detailRow}>
-            <Ionicons name="text" size={24} color="#64748b" />
-            <View style={styles.detailContent}>
-              <Text style={styles.detailLabel}>Title</Text>
-              <Text style={styles.detailValue}>{memory.title}</Text>
-            </View>
-          </View>
-
-          <View style={styles.detailRow}>
-            <Ionicons name="location" size={24} color="#64748b" />
-            <View style={styles.detailContent}>
-              <Text style={styles.detailLabel}>Place</Text>
-              <Text style={styles.detailValue}>{memory.placeName}</Text>
-            </View>
-          </View>
-
-          <View style={styles.detailRow}>
-            <Ionicons name="calendar" size={24} color="#64748b" />
-            <View style={styles.detailContent}>
-              <Text style={styles.detailLabel}>Date</Text>
-              <Text style={styles.detailValue}>{memory.dateRange}</Text>
-            </View>
-          </View>
-
-          {memory.description && (
+        {/* Details Card */}
+        <View style={styles.detailsCard}>
+          <View style={styles.detailSection}>
             <View style={styles.detailRow}>
-              <Ionicons name="document-text" size={24} color="#64748b" />
+              <View style={styles.iconContainer}>
+                <Ionicons name="text" size={20} color="#7c3aed" />
+              </View>
               <View style={styles.detailContent}>
-                <Text style={styles.detailLabel}>Description</Text>
-                <Text style={styles.detailValue}>{memory.description}</Text>
+                <Text style={styles.detailLabel}>Title</Text>
+                <Text style={styles.detailValue}>{memory.title}</Text>
               </View>
             </View>
-          )}
 
-          {memory.locationLink && (
+            <View style={styles.separator} />
+
             <View style={styles.detailRow}>
-              <Ionicons name="map" size={24} color="#64748b" />
+              <View style={styles.iconContainer}>
+                <Ionicons name="location" size={20} color="#7c3aed" />
+              </View>
               <View style={styles.detailContent}>
-                <Text style={styles.detailLabel}>Location Link</Text>
-                <TouchableOpacity onPress={openLocation}>
-                  <Text style={styles.linkText}>Open in maps</Text>
-                </TouchableOpacity>
+                <Text style={styles.detailLabel}>Place</Text>
+                <Text style={styles.detailValue}>{memory.placeName}</Text>
               </View>
             </View>
-          )}
+
+            <View style={styles.separator} />
+
+            <View style={styles.detailRow}>
+              <View style={styles.iconContainer}>
+                <Ionicons name="calendar" size={20} color="#7c3aed" />
+              </View>
+              <View style={styles.detailContent}>
+                <Text style={styles.detailLabel}>Date</Text>
+                <Text style={styles.detailValue}>{memory.dateRange}</Text>
+              </View>
+            </View>
+
+            {memory.description && (
+              <>
+                <View style={styles.separator} />
+                <View style={styles.detailRow}>
+                  <View style={styles.iconContainer}>
+                    <Ionicons name="document-text" size={20} color="#7c3aed" />
+                  </View>
+                  <View style={styles.detailContent}>
+                    <Text style={styles.detailLabel}>Description</Text>
+                    <Text style={styles.detailDescription}>{memory.description}</Text>
+                  </View>
+                </View>
+              </>
+            )}
+
+            {memory.locationLink && (
+              <>
+                <View style={styles.separator} />
+                <View style={styles.detailRow}>
+                  <View style={styles.iconContainer}>
+                    <Ionicons name="map" size={20} color="#7c3aed" />
+                  </View>
+                  <View style={styles.detailContent}>
+                    <Text style={styles.detailLabel}>Location</Text>
+                    <TouchableOpacity onPress={openLocation} style={styles.linkButton}>
+                      <Text style={styles.linkText}>Open in maps</Text>
+                      <Ionicons name="open-outline" size={16} color="#7c3aed" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </>
+            )}
+          </View>
+        </View>
+
+        {/* Memory Footer */}
+        <View style={styles.footer}>
+          <Ionicons name="time-outline" size={16} color="#a78bfa" />
+          <Text style={styles.footerText}>
+            Created on {new Date(memory.createdAt).toLocaleDateString()}
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -157,85 +206,164 @@ export default function MemoryDetailsScreen() {
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#faf5ff',
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f9fafb',
+    backgroundColor: '#faf5ff',
   },
   loadingText: {
     marginTop: 16,
-    color: '#475569',
+    color: '#7c3aed',
+    fontSize: 16,
+    fontFamily: 'Inter-Medium',
   },
-  container: {
-    flex: 1,
-    backgroundColor: '#f9fafb',
-  },
-  content: {
-    paddingVertical: 16,
+  headerGradient: {
+    paddingTop: 50,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    shadowColor: '#7c3aed',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 24,
+    justifyContent: 'space-between',
+    backgroundColor: 'transparent',
   },
   backButton: {
-    marginRight: 16,
     padding: 8,
-    backgroundColor: 'white',
-    borderRadius: 50,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#111827',
+    color: 'white',
+    fontFamily: 'Inter-Bold',
+  },
+  placeholder: {
+    width: 40,
+  },
+  container: {
+    flex: 1,
+  },
+  content: {
+    paddingVertical: 20,
   },
   photoContainer: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     marginBottom: 24,
+    position: 'relative',
   },
   photo: {
     width: '100%',
-    height: 240,
-    borderRadius: 12,
+    height: 280,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
   },
-  detailsContainer: {
-    paddingHorizontal: 16,
+  photoGradient: {
+    position: 'absolute',
+    left: 20,
+    right: 20,
+    bottom: 0,
+    height: 60,
+    borderRadius: 20,
+  },
+  detailsCard: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    marginHorizontal: 20,
+    padding: 24,
+    shadowColor: '#7c3aed',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  detailSection: {
+    width: '100%',
   },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 1,
+    paddingVertical: 12,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: '#ede9fe',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
   },
   detailContent: {
-    marginLeft: 16,
     flex: 1,
   },
   detailLabel: {
     color: '#6b7280',
     fontSize: 14,
+    fontFamily: 'Inter-Medium',
     marginBottom: 4,
   },
   detailValue: {
-    color: '#111827',
+    color: '#4c1d95',
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
+  },
+  detailDescription: {
+    color: '#4c1d95',
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
+    lineHeight: 22,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#f3f4f6',
+    marginVertical: 8,
+  },
+  linkButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    backgroundColor: '#faf5ff',
+    borderRadius: 12,
+    alignSelf: 'flex-start',
   },
   linkText: {
-    color: '#0ea5e9',
-    fontSize: 16,
-    textDecorationLine: 'underline',
+    color: '#7c3aed',
+    fontSize: 14,
+    fontFamily: 'Inter-SemiBold',
+    marginRight: 6,
+  },
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 24,
+    padding: 16,
+  },
+  footerText: {
+    color: '#a78bfa',
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    marginLeft: 8,
   },
 });
