@@ -2,7 +2,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Platform } from 'react-native';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import * as MediaLibrary from 'expo-media-library';
 import CustomAlert from '../../components/CustomAlert';
 import { useAuth } from '../../contexts/AuthContext';
 import { apiService } from '../../utils/api';
@@ -77,6 +80,84 @@ export default function ProfileScreen() {
       'info'
     );
   };
+
+
+const handleDownloadMemories = async () => {
+  try {
+    showAlert(
+      'Download Memories',
+      'Do you want to download all your memories as a JSON file?',
+      'info',
+      async () => {
+        try {
+          // Fetch all memories
+          const response = await apiService.getMemories();
+          const memories = response.memories || [];
+
+          if (memories.length === 0) {
+            showAlert('No Memories', 'You have no memories to download.', 'info');
+            return;
+          }
+
+          // Create JSON content
+          const exportData = {
+            user: {
+              name: user?.name,
+              email: user?.email,
+              exportDate: new Date().toISOString(),
+            },
+            memories: memories,
+            totalMemories: memories.length,
+          };
+
+          const jsonContent = JSON.stringify(exportData, null, 2);
+
+          // Create file name with timestamp
+          const timestamp = new Date().toISOString().split('T')[0];
+          const fileName = `voyage-memories-${user?.name || 'user'}-${timestamp}.json`;
+
+          // Path in app’s document directory (sandbox)
+          const fileUri = FileSystem.documentDirectory + fileName;
+
+          // Save JSON file to sandbox
+          await FileSystem.writeAsStringAsync(fileUri, jsonContent, {
+            encoding: FileSystem.EncodingType.UTF8,
+          });
+
+          // Ask for permission to save to device storage
+          const { status } = await MediaLibrary.requestPermissionsAsync();
+          if (status !== 'granted') {
+            showAlert('Permission Denied', 'Storage permission is required to save the file.', 'error');
+            return;
+          }
+
+          // Save file to Downloads/Documents
+          const asset = await MediaLibrary.createAssetAsync(fileUri);
+          await MediaLibrary.createAlbumAsync('Download', asset, false);
+
+          showAlert('Success', `File saved to your device! (${fileName})`, 'success');
+
+          // Optional: also offer share
+          if (await Sharing.isAvailableAsync()) {
+            await Sharing.shareAsync(fileUri, {
+              mimeType: 'application/json',
+              dialogTitle: 'Share Voyage Memories',
+            });
+          }
+
+        } catch (error) {
+          console.error('Error downloading memories:', error);
+          showAlert('Error', 'Failed to download memories. Please try again.', 'error');
+        }
+      }
+    );
+  } catch (error) {
+    console.error('Error in download process:', error);
+    showAlert('Error', 'Failed to download memories. Please try again.', 'error');
+  }
+};
+
+
 
   const profileItems = [
     {
@@ -183,6 +264,18 @@ export default function ProfileScreen() {
             <View style={styles.deleteAllContent}>
               <Ionicons name="trash-outline" size={20} color="white" />
               <Text style={styles.deleteAllText}>Delete All Memories</Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* Download Memories Button */}
+          <TouchableOpacity
+            style={styles.downloadButton}
+            onPress={handleDownloadMemories}
+            activeOpacity={0.8}
+          >
+            <View style={styles.downloadContent}>
+              <Ionicons name="download-outline" size={20} color="white" />
+              <Text style={styles.downloadText}>Download Memories</Text>
             </View>
           </TouchableOpacity>
 
@@ -389,11 +482,11 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   deleteAllButton: {
-    backgroundColor: '#dc2626',
+    backgroundColor: '#ef4444',
     borderRadius: 16,
     paddingVertical: 18,
     alignItems: 'center',
-    shadowColor: '#dc2626',
+    shadowColor: '#ef4444',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -405,6 +498,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deleteAllText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 18,
+    fontFamily: 'Inter-SemiBold',
+    marginLeft: 8,
+  },
+  downloadButton: {
+    backgroundColor: '#10b981',
+    borderRadius: 16,
+    paddingVertical: 18,
+    alignItems: 'center',
+    shadowColor: '#10b981',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+    marginBottom: 16,
+  },
+  downloadContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  downloadText: {
     color: 'white',
     fontWeight: '600',
     fontSize: 18,
