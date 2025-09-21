@@ -5,6 +5,7 @@ import React from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import CustomAlert from '../../components/CustomAlert';
 import { useAuth } from '../../contexts/AuthContext';
+import { apiService } from '../../utils/api';
 
 const { width } = Dimensions.get('window');
 
@@ -104,7 +105,7 @@ export default function ProfileScreen() {
         type={alertType}
         onClose={() => setAlertVisible(false)}
         onConfirm={alertOnConfirm}
-        confirmText={alertType === 'warning' ? 'Logout' : 'OK'}
+        confirmText={alertTitle === 'Delete All Memories' ? 'Delete' : alertType === 'warning' ? 'Logout' : 'OK'}
         cancelText={alertType === 'info' ? undefined : 'Cancel'}
       />
       {/* Header Gradient */}
@@ -157,6 +158,33 @@ export default function ProfileScreen() {
               </View>
             ))}
           </View>
+
+          {/* Delete All Memories Button */}
+          <TouchableOpacity
+            style={styles.deleteAllButton}
+            onPress={() => {
+              showAlert(
+                'Delete All Memories',
+                'Are you sure you want to delete all your memories? This action cannot be undone.',
+                'warning',
+                async () => {
+                  try {
+                    await apiService.deleteAllMemories();
+                    showAlert('Success', 'All memories have been deleted.', 'success');
+                  } catch (error) {
+                    console.error('Error deleting all memories:', error);
+                    showAlert('Error', 'Failed to delete all memories. Please try again.', 'error');
+                  }
+                }
+              );
+            }}
+            activeOpacity={0.8}
+          >
+            <View style={styles.deleteAllContent}>
+              <Ionicons name="trash-outline" size={20} color="white" />
+              <Text style={styles.deleteAllText}>Delete All Memories</Text>
+            </View>
+          </TouchableOpacity>
 
           {/* Logout Button */}
           <TouchableOpacity
@@ -354,6 +382,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoutText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 18,
+    fontFamily: 'Inter-SemiBold',
+    marginLeft: 8,
+  },
+  deleteAllButton: {
+    backgroundColor: '#dc2626',
+    borderRadius: 16,
+    paddingVertical: 18,
+    alignItems: 'center',
+    shadowColor: '#dc2626',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+    marginBottom: 16,
+  },
+  deleteAllContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  deleteAllText: {
     color: 'white',
     fontWeight: '600',
     fontSize: 18,

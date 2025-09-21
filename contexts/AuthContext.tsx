@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
 
-const API_BASE_URL = 'http://192.168.0.102:5000'; // Change this to your backend URL
+const API_BASE_URL = 'http://192.168.0.106:5000'; // For Android emulator: Use 10.0.2.2 for localhost. For iOS/XCode simulator: Use your machine's IP address.
 
 interface User {
   _id: string;

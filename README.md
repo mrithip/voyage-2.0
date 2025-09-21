@@ -1,6 +1,6 @@
 # Voyage - Travel Memory App
 
-A full-stack React Native (Expo) application for storing and organizing travel memories, built with Node.js, Express, MongoDB, and NativeWind for styling.
+A full-stack React Native (Expo) application for storing and organizing travel memories, built with Node.js, Express, MongoDB.
 
 ## 🚀 Features
 
@@ -63,8 +63,7 @@ voyage/
 ├── utils/
 │   └── api.ts
 ├── package.json
-├── babel.config.js
-└── tailwind.config.js
+└── babel.config.js
 ```
 
 ## 🔧 Setup Instructions
@@ -151,7 +150,6 @@ All memory endpoints require authentication (JWT token).
 
 ## 🎨 Components & Styling
 
-- **TailwindCSS + NativeWind**: Utility-first CSS framework
 - **Expo Vector Icons**: Icon library
 - **Custom Components**: Reusable UI components with consistent styling
 - **CustomAlert Modal**: Beautiful, animated alert dialogs for all user feedback

@@ -233,4 +233,21 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// @route   DELETE /memories
+// @desc    Delete all memories for the authenticated user
+// @access  Private
+router.delete('/', async (req, res) => {
+  try {
+    const result = await Memory.deleteMany({ user: req.user._id });
+
+    res.json({
+      message: 'All memories deleted successfully',
+      deletedCount: result.deletedCount
+    });
+  } catch (error) {
+    console.error('Delete all memories error:', error);
+    res.status(500).json({ message: 'Server error while deleting all memories' });
+  }
+});
+
 module.exports = router;

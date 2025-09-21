@@ -50,7 +50,7 @@ export default function SignupScreen() {
     try {
       const success = await signup(name.trim(), email.trim(), password);
       if (success) {
-        router.replace({ pathname: "/tabs/index" });
+        router.replace({ pathname: "/auth/login" });
       }
     } catch (error) {
       // Error handling is done in the AuthContext

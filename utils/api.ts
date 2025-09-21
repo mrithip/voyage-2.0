@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://192.168.0.102:5000'; // Change this to your backend URL
+const API_BASE_URL = 'http://192.168.0.106:5000'; // For Android emulator: Use 10.0.2.2 for localhost. For iOS/XCode simulator: Use your machine's IP address.
 
 export interface Memory {
   _id: string;
@@ -94,6 +94,16 @@ class ApiService {
       await axios.delete(`/memories/${id}`);
     } catch (error) {
       console.error('Error deleting memory:', error);
+      throw error;
+    }
+  }
+
+  async deleteAllMemories(): Promise<{ deletedCount: number }> {
+    try {
+      const response = await axios.delete(`/memories`);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting all memories:', error);
       throw error;
     }
   }
