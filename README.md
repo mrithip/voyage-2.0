@@ -6,10 +6,13 @@ A full-stack mobile application for capturing and organizing travel memories, bu
 
 - **User Authentication**: Secure signup and login with JWT-based authentication
 - **Memory Management**: Full CRUD operations for travel memories with instant feedback
-- **Photo Upload**: Integrated image picker with base64 encoding for storage
+- **Photo Upload**: Integrated image picker with cropping, rotation, and flipping features
+- **Location Integration**: Clickable location links that redirect to Google Maps
 - **Date Tracking**: Comprehensive date handling with from/to date validation
 - **Search & Filter**: Powerful search by title, place name, or location; filter by year and month
 - **Organized View**: Memories displayed in collapsible year/month folder structure
+- **Bulk Deletion**: Delete all memories with one click
+- **Local Storage Download**: Download memories to device storage
 - **Custom Alerts**: Consistent, animated modal alerts for all user interactions
 - **Cross-Platform**: Runs on both iOS and Android with Expo
 - **Offline Storage**: JWT tokens stored securely in AsyncStorage
